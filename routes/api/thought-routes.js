@@ -26,8 +26,18 @@ router.get("/:id", ({ params }, res) => {
 router.post("/", ({ body }, res) => {
   Thought.create(body)
     .then((thoughtData) =>{
+        console.log(`this is ${thoughtData}`)
         // check to see if username exists if so link thought to user
-        User.find
+        User.findOne({username: thoughtData.username})
+        .then(userData => {
+            if(!userData){
+                res.status(404).json({ message: `No user by the name of ${userData.username} exists please try again case sensitive`})
+                return;
+            }
+            // update user to accept the new thought
+            return User.findOneAndUpdate({_id: userData._id},{$push:{thoughts:thoughtData}},{new:true}).then(updateData => res.json(updateData)).catch(err => res.json(err));
+
+        }).catch(err => res.json(err));
     })
     .catch((err) => res.json(err));
 });
@@ -48,44 +58,42 @@ router.put("/:id", ({ params, body }, res) => {
 });
 // delete user
 router.delete("/:id", ({ params }, res) => {
-  User.findOneAndDelete({ _id: params.id }, { new: true })
+  Thought.findOneAndDelete({ _id: params.id }, { new: true })
     .then((thoughtDelete) => {
       if (!thoughtDelete) {
         return res.status(404).json({ message: "No thought found with this id" });
       }
-      res.json(`${userDelete.username} has been removed`);
+      res.json(`${thoughtDelete.thoughtText} has been removed`);
     })
     .catch((err) => res.json(err));
 });
-//add a friend
-router.post("/:userId/friends/:friendId", ({ params, body }, res) => {
-  User.find({ _id: params.friendId })
-    .then((friendsData) => {
-      if (!friendsData) {
+//post a reaction to a thought
+router.post("/:thoughtId/reactions", ({ params, body }, res) => {
+  Thought.findOneAndUpdate(
+    { _id: params.thoughtId},
+    { $push: {reactions: body}},
+    {new: true, runValidators: true}
+    )
+    .then((thoughtsData) => {
+      if (!thoughtsData) {
         res
           .status(404)
-          .json({ message: "The friend you are trying to add doesn't exist" });
+          .json({ message: "The thought that you are trying to react to doesn't exist" });
         return;
       }
-      return User.findOneAndUpdate(
-        { _id: params.userId },
-        { $push: { friends: params.friendId } },
-        { new: true }
-      )
-        .then((userData) => {
-          if (!userData) {
-            res
-              .status(404)
-              .json({
-                message: "The user you are trying to update doesn't exists",
-              });
-            return;
-          }
-          res.json(userData);
-        })
-        .catch((err) => res.json(err));
+      res.json(thoughtsData);
     })
     .catch((err) => res.json(err));
+});
+// delete route for a reaction
+router.delete("/:thoughtId/reactions/:reactionId", ({params}, res) =>{
+    Thought.findOneAndUpdate(
+        {_id: params.thoughtId},
+        {$pull: {reactions:{reactionId : params.reactionId}}},
+        {new: true}
+    )
+        .then(reactionData => res.json(reactionData))
+        .catch(err => res.json(err));
 });
 
 module.exports = router;

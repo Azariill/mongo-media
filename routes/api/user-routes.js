@@ -104,5 +104,25 @@ router.post("/:userId/friends/:friendId", ({ params, body }, res) => {
     })
     .catch((err) => res.json(err));
 });
+// delete a friend
+router.delete("/:userId/friends/:friendId", ({ params, body }, res) => {
+    User.findOneAndUpdate(
+        { _id: params.userId },
+        {$pull: {friends: {friendId: params.friendId}}},
+        {new:true}
+        )
+      .then((userData) => {
+        if (!userData) {
+          res
+            .status(404)
+            .json({ message: "The user you are trying to add doesn't exist" });
+          return;
+        }
+        res.json(userData);
+        
+  }).catch((err) => res.json(err));
+
+});
+
 
 module.exports = router;

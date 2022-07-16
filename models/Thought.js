@@ -11,7 +11,7 @@ const ReactionSchema = new Schema({
   reactionBody:{
     type: String,
     required: true,
-    validate: [({ length }) => length <= 280, "Password should be longer."]
+    validate: [({ length }) => length <= 280, "reaction should be shorter."]
 
   },
   username:{
@@ -36,7 +36,7 @@ const ThoughtSchema = new Schema({
   thoughtText: {
     type: String,
     require: true,
-    validate: [({ length }) => length <= 280, "Password should be longer."],
+    validate: [({ length }) => length <= 280, "Thought should be shorter."],
   },
 
   createdAt: {
