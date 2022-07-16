@@ -22,7 +22,7 @@ router.get("/:id", ({ params }, res) => {
       res.sendStatus(400);
     });
 });
-//create a new user
+//create a new thought
 router.post("/", ({ body }, res) => {
   Thought.create(body)
     .then((thoughtData) =>{
@@ -89,8 +89,8 @@ router.post("/:thoughtId/reactions", ({ params, body }, res) => {
 router.delete("/:thoughtId/reactions/:reactionId", ({params}, res) =>{
     Thought.findOneAndUpdate(
         {_id: params.thoughtId},
-        {$pull: {reactions:{reactionId : params.reactionId}}},
-        {new: true}
+        { $pull: { reactions:{reactionId : params.reactionId}} },
+        { new: true }
     )
         .then(reactionData => res.json(reactionData))
         .catch(err => res.json(err));

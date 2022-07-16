@@ -70,8 +70,9 @@ router.delete("/:id", ({ params }, res) => {
       }
       //remove all thoughts by user
       Thought.deleteMany({username: userData.username}).catch(err=> res.json(err));
-      res.json(`${userDelete.username} has been removed`);
+      
     })
+    .then(res.json({message: 'User has been removed as well as all their thoughts'}))
     .catch((err) => res.json(err));
 });
 //add a friend
@@ -89,6 +90,10 @@ router.post("/:userId/friends/:friendId", ({ params, body }, res) => {
         { $push: { friends: params.friendId } },
         { new: true }
       )
+        .populate({
+            path: "friends",
+            select: "-_id username",
+        })
         .then((userData) => {
           if (!userData) {
             res
@@ -108,14 +113,18 @@ router.post("/:userId/friends/:friendId", ({ params, body }, res) => {
 router.delete("/:userId/friends/:friendId", ({ params, body }, res) => {
     User.findOneAndUpdate(
         { _id: params.userId },
-        {$pull: {friends: {friendId: params.friendId}}},
+        {$pull: {friends:  params.friendId}},
         {new:true}
         )
+      .populate({
+            path: "friends",
+            select: "-_id username",
+          })
       .then((userData) => {
         if (!userData) {
           res
             .status(404)
-            .json({ message: "The user you are trying to add doesn't exist" });
+            .json({ message: "The user you are trying to find doesn't exist" });
           return;
         }
         res.json(userData);
