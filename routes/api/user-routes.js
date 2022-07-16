@@ -64,12 +64,12 @@ router.put("/:id", ({ params, body }, res) => {
 // delete user
 router.delete("/:id", ({ params }, res) => {
   User.findOneAndDelete({ _id: params.id }, { new: true })
-    .then((userDelete) => {
-      if (!userDelete) {
+    .then((userData) => {
+      if (!userData) {
         return res.status(404).json({ message: "No user found with this id" });
       }
-      // future for thought routes removal
-      //Thought.deleteMany()
+      //remove all thoughts by user
+      Thought.deleteMany({username: userData.username}).catch(err=> res.json(err));
       res.json(`${userDelete.username} has been removed`);
     })
     .catch((err) => res.json(err));
