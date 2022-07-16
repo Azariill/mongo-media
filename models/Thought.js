@@ -1,6 +1,36 @@
 /** @format */
+const { Schema, model, Types } = require("mongoose");
+const dateFormat = require('../utils/dateFormat');
 
-const { Schema, model } = require("mongoose");
+const ReactionSchema = new Schema({
+
+  reactionId: {
+    type: Schema.Types.ObjectId,
+    default: () => new Types.ObjectId()
+  },
+  reactionBody:{
+    type: String,
+    required: true,
+    validate: [({ length }) => length <= 280, "Password should be longer."]
+
+  },
+  username:{
+    type: String,
+    required: true,
+    trim: true
+  },
+  createdAt:{
+    type: Date,
+    default: Date.now,
+    get: createdAtVal => dateFormat(createdAtVal)
+  }
+},
+{
+  toJSON:{
+    getters: true
+  }
+}
+);
 
 const ThoughtSchema = new Schema({
   thoughtText: {
@@ -12,20 +42,28 @@ const ThoughtSchema = new Schema({
   createdAt: {
     type: Date,
     default: Date.now,
+    get: createdAtVal => dateFormat(createdAtVal)
   },
 
   username: {
     type: String,
     require: true,
   },
-  reaction: [],
+  reactions: [ReactionSchema],
+},
+{
+    toJSON:{
+        virtuals: true,
+        getters: true
+    }
+}
+);
+
+ThoughtSchema.virtual("reactionCount").get(() => {
+  // returns how many reactions the user has on query
+  return this.reactions.length;
 });
 
-UserSchema.virtual("friendCount").get(() => {
-  // returns how many friends the user has on query
-  return this.friends.length;
-});
+const Thought = model("Thought", ThoughtSchema);
 
-const User = model("User", UserSchema);
-
-module.exports = User;
+module.exports = Thought;
