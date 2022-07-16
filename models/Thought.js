@@ -59,7 +59,7 @@ const ThoughtSchema = new Schema({
 }
 );
 
-ThoughtSchema.virtual("reactionCount").get(() => {
+ThoughtSchema.virtual("reactionCount").get(function() {
   // returns how many reactions the user has on query
   return this.reactions.length;
 });
