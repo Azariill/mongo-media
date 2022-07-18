@@ -1,8 +1,8 @@
 # Mongo-Media
 
 ## Description
-  This is a backend built using mongoDB. The modules found are intended to be for a social media application. Please see Test section for walkthrough video links.<br> 
-   <img src="https://img.shields.io/badge/npm-CB3837?style=for-the-badge&logo=npm&logoColor=white"/><br>
+  ### This is a backend built using mongoDB. The modules found are intended to be for a social media application. Please see Test section for walkthrough video links.<br> 
+   <br><img src="https://img.shields.io/badge/npm-CB3837?style=for-the-badge&logo=npm&logoColor=white"/><br>
    <img src="https://img.shields.io/badge/JavaScript-323330?style=for-the-badge&logo=javascript&logoColor=F7DF1E"/><br>
    <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white"/><br>
    <img src="https://img.shields.io/badge/Express.js-404D59?style=for-the-badge" /><br>
